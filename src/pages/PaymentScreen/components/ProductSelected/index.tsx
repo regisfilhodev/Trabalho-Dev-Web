@@ -6,76 +6,87 @@ import { formatPriceWithType } from '../../../../util/format'
 
 interface ProductSelectedProps {
   shoppingCartData: {
-    coffeeId: number
+    coffeeId: string
     qtde: number
   }
 }
 
-export function ProductSelected(shoppingCartData: ProductSelectedProps) {
+export function ProductSelected({ shoppingCartData }: ProductSelectedProps) {
   const { coffeeList, handleSetShoppingCart, handleRemoveItemShoppingCart } =
     useProducts()
 
-  const productCart = shoppingCartData.shoppingCartData
+  const productCart = shoppingCartData
 
-  const product = coffeeList.filter(
-    (productItem: Coffee) =>
-      Number(productItem.id) === productCart.coffeeId && {
-        id: productItem.id,
-        name: productItem.name,
-        coffee_image: productItem.coffee_image,
-        value: productItem.value,
-        qtde: productCart.qtde,
-      },
+  // Encontrar o produto correspondente
+  const product = coffeeList.find(
+    (productItem: Coffee) => productItem.id === productCart.coffeeId
   )
+
+  console.log('ProductSelected renderizando:', {
+    productCart,
+    product,
+    coffeeListLength: coffeeList.length,
+    availableIds: coffeeList.map(c => c.id),
+    searchingForId: productCart.coffeeId
+  })
+
+  if (!product) {
+    return (
+      <ProductSelectedContainer>
+        <div style={{ padding: '1rem', textAlign: 'center' }}>
+          <p>Produto não encontrado (ID: {productCart.coffeeId})</p>
+          <p style={{ fontSize: '0.8rem', color: '#666' }}>
+            IDs disponíveis: {coffeeList.map(c => c.id).join(', ')}
+          </p>
+        </div>
+      </ProductSelectedContainer>
+    )
+  }
 
   return (
     <ProductSelectedContainer>
-      {!!product && product.length > 0 && (
-        <>
-          <img src={product[0].coffee_image} alt="" />
+      <img src={product.coffee_image} alt={product.name} />
+      <div>
+        <div>
+          <span>{product.name}</span>
           <div>
-            <div>
-              <span>{product[0].name}</span>
-              <div>
-                <ControlAmountProduct>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSetShoppingCart({
-                        coffeeId: Number(productCart.coffeeId),
-                        qtde: 1,
-                        typeOperation: 'remove',
-                      })
-                    }
-                  >
-                    <Minus />
-                  </button>
-                  <span>{productCart.qtde}</span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSetShoppingCart({
-                        coffeeId: Number(productCart.coffeeId),
-                        qtde: 1,
-                        typeOperation: 'add',
-                      })
-                    }
-                  >
-                    <Plus />
-                  </button>
-                </ControlAmountProduct>
-                <button
-                  onClick={() => handleRemoveItemShoppingCart(productCart)}
-                >
-                  <Trash size={16} />
-                  REMOVER
-                </button>
-              </div>
-            </div>
-            <span>{formatPriceWithType(product[0].value)}</span>
+            <ControlAmountProduct>
+              <button
+                type="button"
+                onClick={() =>
+                  handleSetShoppingCart({
+                    coffeeId: productCart.coffeeId,
+                    qtde: 1,
+                    typeOperation: 'remove',
+                  })
+                }
+              >
+                <Minus />
+              </button>
+              <span>{productCart.qtde}</span>
+              <button
+                type="button"
+                onClick={() =>
+                  handleSetShoppingCart({
+                    coffeeId: productCart.coffeeId,
+                    qtde: 1,
+                    typeOperation: 'add',
+                  })
+                }
+              >
+                <Plus />
+              </button>
+            </ControlAmountProduct>
+            <button
+              onClick={() => handleRemoveItemShoppingCart(productCart)}
+            >
+              <Trash size={16} />
+              REMOVER
+            </button>
           </div>
-        </>
-      )}
+        </div>
+        <span>{formatPriceWithType(product.value)}</span>
+      </div>
     </ProductSelectedContainer>
   )
 }

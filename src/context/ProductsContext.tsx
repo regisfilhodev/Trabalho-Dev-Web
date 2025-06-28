@@ -1,17 +1,17 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { api } from '../service/api'
 import { useNavigate } from 'react-router-dom'
 import { Coffee } from '../@types/globalTypes'
 import { ShippingAddressFormData } from '../pages/PaymentScreen'
+import { api } from '../service/api'
 
 interface ShoppingCart {
-  coffeeId: number
+  coffeeId: string
   qtde: number
   typeOperation?: 'add' | 'remove'
 }
 interface ShoppingCartFormated {
-  id: number
+  id: string
   name: string
   coffee_image: string
   qtde: number
@@ -71,10 +71,23 @@ export function ProductsProvider({ children }: ProductsProviderProps) {
   }, [shoppingCart])
 
   async function getProductList() {
-    const response = await api.get(`/products`)
-    setCoffeeList(response.data)
-    console.log(response)
+    try {
+      console.log('🔄 Carregando produtos da API...')
+      const response = await api.get('/coffees')
+      if (response.data && response.data.coffees) {
+        setCoffeeList(response.data.coffees)
+        console.log('✅ Produtos carregados do banco:', response.data.coffees.length, 'cafés')
+        console.log('📋 IDs dos produtos:', response.data.coffees.map((c: any) => c.id))
+      } else {
+        console.error('❌ Resposta da API não contém dados válidos:', response.data)
+        setCoffeeList([])
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar produtos:', error)
+      setCoffeeList([])
+    }
   }
+
   function handleSetShoppingCart(product: ShoppingCart) {
     const checkItem = shoppingCart.find(
       (productItem) => productItem.coffeeId === product.coffeeId,
@@ -125,11 +138,12 @@ export function ProductsProvider({ children }: ProductsProviderProps) {
       const product = coffeeList[i]
       for (const j in shoppingCart) {
         const productCartRegister = shoppingCart[j]
-        if (Number(productCartRegister.coffeeId) === Number(product.id)) {
+        // Comparação direta de strings
+        if (productCartRegister.coffeeId === product.id) {
           listProductsInCart = [
             ...listProductsInCart,
             {
-              id: Number(product.id),
+              id: product.id,
               name: product.name,
               coffee_image: product.coffee_image,
               value: product.value,
@@ -152,9 +166,25 @@ export function ProductsProvider({ children }: ProductsProviderProps) {
     setTotalPayment(total)
   }
 
+  async function getCoffeeById(id: string): Promise<Coffee | null> {
+    try {
+      const response = await api.get(`/coffees/${id}`)
+      return response.data.coffee
+    } catch (error) {
+      console.error('Erro ao buscar produto por ID:', error)
+      return null
+    }
+  }
+
   async function registerNewOrder(data: ShippingAddressFormData) {
-    const formatedData = {
-      id: uuidv4(),
+    console.log('🔄 Registrando novo pedido...')
+    
+    if (!productOrder) {
+      console.error('❌ Nenhum produto no carrinho')
+      return
+    }
+
+    const orderData = {
       destination: {
         cep: data.cep,
         street: data.street,
@@ -164,23 +194,81 @@ export function ProductsProvider({ children }: ProductsProviderProps) {
         city: data.city,
         uf: data.uf,
       },
-      productOrder,
       payment: data.payment,
+      total: productOrder.total,
+      items: productOrder.finalShoppingList.map((item) => ({
+        quantity: item.qtde,
+        value: item.value,
+        productId: item.id
+      }))
     }
 
-    await api.post('/shoppingRegistred', formatedData)
-    localStorage.setItem(
-      '@coffee-delivery:shopping-cart-coffee-1.0.0',
-      JSON.stringify([]),
-    )
-    setShoppingCart([])
-    setAddress(data)
-    navigate('/purchase-completed')
+    try {
+      console.log('📦 Dados do pedido:', orderData)
+      await api.post('/orders', orderData)
+      
+      console.log('✅ Pedido registrado com sucesso!')
+      console.log('🧹 Limpando carrinho...')
+      
+      // Limpar carrinho
+      localStorage.setItem(
+        '@coffee-delivery:shopping-cart-coffee-1.0.0',
+        JSON.stringify([]),
+      )
+      setShoppingCart([])
+      setAddress(data)
+      
+      console.log('🎉 Redirecionando para confirmação...')
+      navigate('/purchase-completed')
+    } catch (error) {
+      console.error('❌ Erro ao registrar pedido:', error)
+      alert('Erro ao registrar pedido. Tente novamente.')
+    }
   }
 
   useEffect(() => {
     getProductList()
   }, [])
+
+  // Limpar carrinho quando produtos são carregados (para evitar IDs desatualizados)
+  useEffect(() => {
+    if (coffeeList.length > 0) {
+      // Verificar se há itens no carrinho com IDs que não existem mais
+      const validIds = coffeeList.map(coffee => coffee.id)
+      const currentCart = JSON.parse(localStorage.getItem('@coffee-delivery:shopping-cart-coffee-1.0.0') || '[]')
+      
+      // Tentar migrar IDs antigos (numéricos) para novos IDs CUID
+      const migratedCart = currentCart.map((item: any) => {
+        // Se o ID é numérico, tentar mapear para o ID CUID correspondente
+        if (/^\d+$/.test(item.coffeeId)) {
+          const numericId = parseInt(item.coffeeId) - 1 // IDs antigos começavam em 1
+          if (numericId >= 0 && numericId < coffeeList.length) {
+            console.log(`🔄 Migrando ID ${item.coffeeId} para ${coffeeList[numericId].id}`)
+            return { ...item, coffeeId: coffeeList[numericId].id }
+          }
+        }
+        return item
+      })
+      
+      const hasInvalidItems = migratedCart.some((item: any) => !validIds.includes(item.coffeeId))
+      
+      if (hasInvalidItems) {
+        console.log('❌ Carrinho contém IDs inválidos, limpando...')
+        setShoppingCart([])
+        localStorage.setItem(
+          '@coffee-delivery:shopping-cart-coffee-1.0.0',
+          JSON.stringify([])
+        )
+      } else if (JSON.stringify(currentCart) !== JSON.stringify(migratedCart)) {
+        console.log('✅ IDs migrados com sucesso:', migratedCart)
+        setShoppingCart(migratedCart)
+        localStorage.setItem(
+          '@coffee-delivery:shopping-cart-coffee-1.0.0',
+          JSON.stringify(migratedCart)
+        )
+      }
+    }
+  }, [coffeeList]) // Removido shoppingCart da dependência para evitar loop
 
   return (
     <ProductsContext.Provider

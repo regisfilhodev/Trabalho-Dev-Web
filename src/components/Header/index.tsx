@@ -66,6 +66,46 @@ export function Header() {
   function handleShoppingCartLink() {
     if (shoppingCart.length > 0) {
       navigate('/payment')
+    } else {
+      // Feedback visual quando carrinho está vazio
+      const cartButton = document.querySelector('[data-cart-button]') as HTMLElement
+      if (cartButton) {
+        cartButton.style.transform = 'scale(0.95)'
+        cartButton.style.backgroundColor = '#ff6b6b'
+        setTimeout(() => {
+          cartButton.style.transform = 'scale(1)'
+          cartButton.style.backgroundColor = ''
+        }, 200)
+      }
+      
+      // Mostrar tooltip temporário
+      const tooltip = document.createElement('div')
+      tooltip.textContent = 'Adicione produtos ao carrinho primeiro!'
+      tooltip.style.cssText = `
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: #2d3748;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 1000;
+        margin-top: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        animation: fadeIn 0.3s ease;
+      `
+      
+      const cartContainer = document.querySelector('[data-cart-container]')
+      if (cartContainer) {
+        cartContainer.style.position = 'relative'
+        cartContainer.appendChild(tooltip)
+        
+        setTimeout(() => {
+          tooltip.remove()
+        }, 3000)
+      }
     }
   }
 
@@ -83,11 +123,11 @@ export function Header() {
           </LocationContainer>
         )}
 
-        <CartButtom onClick={handleShoppingCartLink}>
+        <CartButtom onClick={handleShoppingCartLink} data-cart-button>
           <ShoppingCart size={22} weight="fill" />
         </CartButtom>
         {shoppingCart.length > 0 && (
-          <div>
+          <div data-cart-container>
             <span>{shoppingCart.length}</span>
           </div>
         )}

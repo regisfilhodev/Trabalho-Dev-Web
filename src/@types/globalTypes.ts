@@ -3,7 +3,7 @@ import { ShippingAddressFormData } from '../pages/PaymentScreen'
 export interface Coffee {
   id: string
   name: string
-  type: string
+  type: string[]
   coffee_image: string
   description: string
   value: number

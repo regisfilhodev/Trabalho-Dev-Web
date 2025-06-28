@@ -1,195 +1,172 @@
-<h1 align="center">
-    <img alt="todo" title="todo" src=".github/logo.svg" width="300px" />
-</h1>
+# ☕ Coffee Delivery
 
-<div align="center">
+Um projeto full-stack de delivery de café desenvolvido com React, TypeScript, Express, Prisma ORM e PostgreSQL (Neon).
 
-[![Licence](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE.md)
-<img alt="TypeScript" src="https://img.shields.io/badge/typescript-%23007ACC.svg?&style=for-the-badge&logo=typescript&logoColor=white"/>
-<img alt="React" src="https://img.shields.io/badge/react-%2320232a.svg?&style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
-<img alt="Styled Component" src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"/>
-<img alt="Yarn" src="https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white"/>
-<img alt="Vite" src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E"/>
-<img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
+## 🚀 Tecnologias
 
-<br>
+- **Frontend**: React, TypeScript, Vite, Styled Components
+- **Backend**: Express.js, Prisma ORM
+- **Database**: PostgreSQL (Neon)
+- **Formulários**: React Hook Form + Zod
+- **Roteamento**: React Router DOM
 
-<p align="center">
-  <strong>
-      <a href="#-Preview">Preview</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-projeto">Projeto</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-layout">Layout</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-tecnologias">Tecnologias</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-como-executar-o-projeto">Executando</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-referências">Referências</a> &nbsp;|&nbsp; 
-  </strong>
-  <strong>
-      <a href="#-autor">Autor</a> 
-  </strong>
-</p>
+## 📋 Pré-requisitos
 
-<p align="center">
-  <img alt="moveit" src=".github/coffee-delivery.png" width="100%">
-</p>
-</div>
+- Node.js 18+
+- Conta no [Neon](https://neon.tech) (banco PostgreSQL)
 
-## **✨ Preview**
+## 🛠️ Configuração
 
-#### Sistema Online: https://coffee-delivery-ecomerce.vercel.app
-
----
-
-## **💻 Projeto**
-
-Um projeto desenvolvido durante o <b>Bootcamp Ignite</b> da <b>Rocketseat</b>, o projeto "Coffee Delivery" é um projeto que simula um e-commerce de venda de cafés por entrega.
-
----
-
-## **🔖 Layout**
-
-Você pode visualizar o layout do projeto no formato através [desse link](<https://www.figma.com/file/cXnQ94HEjpoxl55ZtjKRiy/Coffee-Delivery-(JD)?type=design&node-id=2%3A12&mode=design&t=FEeKvDZIRfmBSa9U-1>). Lembrando que você irá precisar ter uma conta no [Figma](http://figma.com/).
-
-#### **Web**
-
-<p align="center">
-  <img  src=".github/screen01.png" width="100%">
-  <img  src=".github/screen02.png" width="100%">
-  <img  src=".github/screen03.png" width="100%">
-</p>
-
----
-
-## **💻 Tecnologias**
-
-#### **Website** ([React][react])
-
-- **[React][react]**
-- **[Typescript][typescript]**
-- **[Vite][vite]**
-- **[Styled Components][styled_components]**
-- **[React Hook Form][react_hook_form]**
-- **[JSON Sserver][json_server]**
-- **[Node v18.16.1][node]**
-
-> \* Veja o arquivo <kbd>[package.json](./package.json)</kbd>
-
-#### **Utilitários**
-
-- Editor: **[Visual Studio Code][vscode]**
-- Markdown: **[StackEdit][stackedit]**, **<kbd>[Markdown Emoji][markdown_emoji]</kbd>**
-
----
-
-## **🚀 Como executar o projeto**
-
-### Configurações Iniciais
-
-Primeiro, você precisa ter o <kbd>[NodeJS](https://nodejs.org/en/download/)</kbd> instalado na sua máquina.
-
-Se você estiver utilizando o **Linux**, você pode optar por instalar o **Node** através do gerênciador de versões <kbd>[nvm]</kbd> para caso seja nescessario alterar a sua versão do **Node** para uma versão mais antiga ou mais nova.
-
-Você pode optar também por utilizar o **yarn** no lugar do **npm**. Você pode instalar clicando nesse <kbd>[link][yarn]</kbd>.
-
-Após ter o **Node** instalado, instale as dependências do **React** contidas nos arquivos `package.json` que se encontram na raíz do repositório. Para instalar as dependências, basta abrir o terminal no diretório e digitar o comando:
-
-```sh
-$ npm install
-
-# ou
-
-$ yarn
+### 1. Clone o repositório
+```bash
+git clone <url-do-repositorio>
+cd coffee-delivery
 ```
 
-> Veja a parte de **scripts {}** do arquivo <kbd>[package.json](./package.json)</kbd> para saber quais scripts estão disponíveis.
-
-### Executando JSON Server
-
-```sh
-# Executando o JSON Server:
-$ npm run server
-
-# ou
-
-# Executando o JSON Server:
-$ yarn server
+### 2. Instale as dependências
+```bash
+npm install
 ```
+
+### 3. Configure o banco de dados
+
+1. Crie uma conta no [Neon](https://neon.tech)
+2. Crie um novo projeto PostgreSQL
+3. Copie a URL de conexão fornecida
+4. Crie um arquivo `.env` na raiz do projeto:
+
+```env
+DATABASE_URL="postgresql://seu_usuario:sua_senha@seu_host/database_name?sslmode=require"
+```
+
+### 4. Configure o banco
+
+```bash
+# Gerar o cliente Prisma
+npm run db:generate
+
+# Executar as migrações
+npm run db:migrate
+
+# Verificar se o banco está configurado
+npm run db:check
+```
+
+### 5. Execute o projeto
+
+**Para desenvolvimento, você precisa rodar o backend e frontend separadamente:**
+
+```bash
+# Terminal 1 - Backend API
+npm run api
+
+# Terminal 2 - Frontend
+npm run dev
+```
+
+**Ou use o script combinado (se configurado):**
+```bash
+npm run dev:full
+```
+
+## 📁 Estrutura do Projeto
+
+```
+coffee-delivery/
+├── src/
+│   ├── components/          # Componentes reutilizáveis
+│   ├── pages/              # Páginas da aplicação
+│   ├── context/            # Context API (carrinho)
+│   ├── hooks/              # Custom hooks
+│   ├── service/            # Serviços (API e Prisma)
+│   ├── styles/             # Estilos globais
+│   ├── @types/             # Tipos TypeScript
+│   └── scripts/            # Scripts (seed)
+├── prisma/                 # Schema e migrações
+├── server-api.js           # Servidor Express (backend)
+└── public/                 # Assets estáticos
+```
+
+## 🎯 Funcionalidades
+
+- ✅ **Catálogo de cafés** com imagens e descrições
+- ✅ **Carrinho de compras** com localStorage
+- ✅ **Formulário de endereço** com validação
+- ✅ **Seleção de método de pagamento**
+- ✅ **Confirmação de pedido** com dados de entrega
+- ✅ **Proteção de rotas** (carrinho vazio)
+- ✅ **Interface responsiva** e moderna
+- ✅ **API REST** com Express.js
+- ✅ **Integração com banco PostgreSQL** via Prisma
+
+## 🗄️ Banco de Dados
+
+O projeto usa **Prisma ORM** com **PostgreSQL (Neon)**:
+
+### Modelos:
+- **Product**: Cafés disponíveis
+- **Order**: Pedidos realizados
+- **OrderItem**: Itens de cada pedido
+
+### Comandos úteis:
+```bash
+# Visualizar dados no Prisma Studio
+npm run db:studio
+
+# Verificar status do banco
+npm run db:check
+
+# Executar migrações
+npm run db:migrate
+```
+
+## 🔌 API Endpoints
+
+O backend Express expõe os seguintes endpoints:
+
+- `GET /api/coffees` - Listar todos os cafés
+- `GET /api/coffees/:id` - Buscar café por ID
+- `POST /api/orders` - Criar novo pedido
+- `GET /api/orders` - Listar todos os pedidos
+
+## 🎨 Interface
+
+- **Design moderno** com gradientes e sombras
+- **Animações suaves** e feedback visual
+- **Responsivo** para mobile e desktop
+- **Tema escuro** com cores de café
+
+## 📱 Páginas
+
+1. **Home** (`/`): Catálogo de cafés
+2. **Pagamento** (`/payment`): Formulário de entrega
+3. **Confirmação** (`/purchase-completed`): Pedido confirmado
+
+## 🔧 Scripts Disponíveis
+
+- `npm run dev` - Servidor de desenvolvimento (frontend)
+- `npm run api` - Servidor backend (Express)
+- `npm run build` - Build para produção
+- `npm run db:generate` - Gerar cliente Prisma
+- `npm run db:migrate` - Executar migrações
+- `npm run db:check` - Verificar status do banco
+- `npm run db:studio` - Abrir Prisma Studio
+
+## 🚀 Deploy
+
+### Para produção, você precisa:
+
+1. **Deploy do Backend**: Hospedar o `server-api.js` em Vercel, Render, Railway, etc.
+2. **Deploy do Frontend**: Hospedar o build do React em Vercel, Netlify, etc.
+3. **Configurar URLs**: Atualizar a URL da API no frontend para apontar para o backend em produção
+
+### Variáveis de ambiente necessárias:
+- `DATABASE_URL`: URL do banco PostgreSQL (Neon)
+
+## 👨‍💻 Desenvolvido por
+
+**Seu Nome** - Desenvolvedor Full Stack
 
 ---
 
-### Executando o WebSite
-
-```sh
-# Executando o website em outra aba de terminal:
-$ npm run dev
-
-# ou
-
-# Executando o website em outra aba de terminal:
-$ yarn dev
-```
-
-> Se o browser não abrir automaticamente, acesse: http://localhost:5173.
-
----
-
-## **📚 Referências**
-
-- [Blog Rocketseat](https://blog.rocketseat.com.br/)
-- [ReactJS](https://reactjs.org/docs/getting-started.html) | [ReactJS pt-BR](https://pt-br.reactjs.org/docs/getting-started.html)
-- [Node](https://nodejs.org/en/)
-
-## **👨‍🚀 Autor**
-
-<a href="https://github.com/regisfilhodev">
- <img style="border-radius: 50%;" src="https://github.com/regisfilhodev.png" width="100px;" alt="Regis Filho"/>
- <br />
- <sub><b>Regis Filho</b></sub></a>
- <br />
-
-Esforçado, dedicado e apaixonado por tecnologia. Sempre explorando novas ferramentas, enfrentando desafios e buscando aprimoramento contínuo.
-
-[![GitHub](https://img.shields.io/badge/-GitHub-000000?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/regisfilhodev)](https://github.com/regisfilhodev)
-
-## **:memo: Licença**
-
-Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE.md) para mais detalhes.
-
-<!-- Website Links -->
-
-[rocketseat_site]: https://rocketseat.com.br/
-
-<!-- Badges -->
-
-[repository_license_badge]: https://img.shields.io/github/license/JairoDoni/NLW-1.0
-[web_react_badge]: https://img.shields.io/badge/web-react-blue
-[typescript]: https://www.typescriptlang.org/pt/
-
-<!-- Techs -->
-
-[react]: https://reactjs.org/
-[vite]: https://vitejs.dev
-[styled_components]: https://styled-components.com
-[zod]: https://zod.dev
-[json_server]: https://github.com/typicode/json-server
-[react_hook_form]: https://www.react-hook-form.com
-[node]: https://nodejs.org/en/
-[nvm]: https://github.com/nvm-sh/nvm
-[vscode]: https://code.visualstudio.com/
-[react_native]: http://www.reactnative.com/
-[stackedit]: https://stackedit.io
-[markdown_emoji]: https://gist.github.com/rxaviers/7360908
-[react_icons]: https://react-icons.github.io/react-icons/
-[typescript]: https://www.typescriptlang.org/
-[asdf]: https://github.com/asdf-vm/asdf
-[yarn]: https://classic.yarnpkg.com/en/docs/install/#debian-stable
-[webpack]: https://webpack.js.org
+⭐ Se este projeto te ajudou, deixe uma estrela!

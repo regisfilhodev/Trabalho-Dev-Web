@@ -76,7 +76,6 @@ export function PaymentScreen() {
     calcTotalPayment,
   } = useProducts()
 
-  //  eslint-disable-next-line
   const shippingAddressForm = useForm<ShippingAddressFormData>({
     resolver: zodResolver(shippingAddressFormValidationSchema),
     defaultValues: {
@@ -90,20 +89,20 @@ export function PaymentScreen() {
   })
 
   const { handleSubmit, reset } = shippingAddressForm
-
   const navigate = useNavigate()
 
-  const listProducts = shoppingCart.sort(
-    (productA, productB) => productA.coffeeId - productB.coffeeId,
-  )
-
   useEffect(() => {
+    console.log('PaymentScreen carregada')
+    console.log('shoppingCart:', shoppingCart)
+    console.log('coffeeList:', coffeeList)
+    
     if (shoppingCart.length > 0 && coffeeList.length > 0) {
       calcTotalPayment()
     }
-  }, [coffeeList, shoppingCart])
+  }, [coffeeList, shoppingCart, calcTotalPayment])
 
   function handleRegisterNewOrder(data: ShippingAddressFormData) {
+    console.log('Registrando pedido:', data)
     if (data) {
       registerNewOrder(data)
       reset()
@@ -115,11 +114,82 @@ export function PaymentScreen() {
 
   const formatValue = (value: number) => formatPriceWithType(value)
 
-  useEffect(() => {
-    if (shoppingCart.length === 0 && location.pathname === '/payment') {
-      navigate('/')
-    }
-  }, [location.pathname])
+  // Verificar se o carrinho está vazio
+  if (shoppingCart.length === 0) {
+    return (
+      <div style={{ 
+        padding: '4rem 2rem', 
+        textAlign: 'center',
+        minHeight: '60vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
+        borderRadius: '8px',
+        margin: '2rem',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+      }}>
+        <div style={{
+          background: '#fff',
+          padding: '3rem',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <div style={{
+            fontSize: '4rem',
+            marginBottom: '1rem',
+            color: '#8B5A3C'
+          }}>
+            ☕
+          </div>
+          <h2 style={{
+            color: '#2D3748',
+            marginBottom: '1rem',
+            fontSize: '1.5rem',
+            fontWeight: '600'
+          }}>
+            Carrinho vazio
+          </h2>
+          <p style={{
+            color: '#718096',
+            marginBottom: '2rem',
+            lineHeight: '1.6'
+          }}>
+            Parece que você ainda não adicionou nenhum café ao carrinho. 
+            Que tal experimentar nossos deliciosos cafés?
+          </p>
+          <button 
+            onClick={() => navigate('/')}
+            style={{
+              background: 'linear-gradient(135deg, #8B5A3C 0%, #A0522D 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(139, 90, 60, 0.3)'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(139, 90, 60, 0.4)'
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 90, 60, 0.3)'
+            }}
+          >
+            🛒 Explorar Cafés
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <PaymentContainer onSubmit={handleSubmit(handleRegisterNewOrder)} action="">
@@ -129,14 +199,12 @@ export function PaymentScreen() {
       <div>
         <h1>Cafés selecionados</h1>
         <div>
-          {!!listProducts &&
-            listProducts.length > 0 &&
-            listProducts.map((product) => (
-              <ProductSelected
-                key={product.coffeeId}
-                shoppingCartData={product}
-              />
-            ))}
+          {shoppingCart.map((product) => (
+            <ProductSelected
+              key={product.coffeeId}
+              shoppingCartData={product}
+            />
+          ))}
           <TotalComponent>
             <div>
               <span>Total de itens</span>
@@ -150,7 +218,7 @@ export function PaymentScreen() {
               <span>Total</span>
               <span>{formatValue(totalWithFrete)}</span>
             </div>
-            <button type="submit">COMFIRMAR PEDIDO</button>
+            <button type="submit">CONFIRMAR PEDIDO</button>
           </TotalComponent>
         </div>
       </div>
